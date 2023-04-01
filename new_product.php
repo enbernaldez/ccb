@@ -1,6 +1,8 @@
 <?php
     include_once "db_conn.php";
 
+//  di ko na in-edit
+
     if(isset($_POST['new_item_name']) && $_FILES['new_item_image']['error'] == '0') {
         $u_itemname = $_POST['new_item_name']; //itemname
         $u_itemcat = $_POST['new_item_cat'];
