@@ -36,7 +36,7 @@ if(isset($_POST['login_username']) || null !== ($_SESSION["username"] && $_SESSI
 
     //if $result is empty, the param $l_username does not exist in db
     if(mysqli_num_rows($result) == 0) {
-        header("location: landing_page.php?login=failed");
+        header("location: landing_page.php?login=notreg");
         exit();
     }
     //verifies the pwd typed vs the pwd stored in db
@@ -53,10 +53,10 @@ if(isset($_POST['login_username']) || null !== ($_SESSION["username"] && $_SESSI
                     header("location: delivery_page.php?user_name=" . $row['user_name']);
                     break;
                 default:
-                    header("location: landing_page.php?login=failed");
+                    header("location: landing_page.php?login=unidstat");
             }
         } else {
-            header("location: landing_page.php?login=failed");
+            header("location: landing_page.php?login=wrongpass");
             exit();
         }
     }
