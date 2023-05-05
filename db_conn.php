@@ -13,3 +13,4 @@ if (!$conn){
 
 session_start();
 include_once ("sql_utilities.php");
+include_once ("function.php");
