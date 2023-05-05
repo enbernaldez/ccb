@@ -2,66 +2,22 @@
     <?php include_once "db_conn.php"; ?>
     <head>
         <meta charset="UTF-8">
-        <title>Products</title>
+        <title>Product Index</title>
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="bootstrap-icons-1.9.1/bootstrap-icons.css">
-        <style type="text/css">
-            .navbar {
-                background-color: #311C09;
-                overflow: hidden;
-                position: fixed;
-                width: 100%;
-                z-index: 1;
-            }
-            .navbar a {
-                color: #FF8E7B;
-                font-family: Times New Roman;
-                font-style: italic;
-                text-decoration: none;
-                font-size: 20px;
-            }
-            .navbar a:hover {
-                color: #FEC7BE;
-            }
-            body {
-                background-color: #FFEFC1;
-            }
-            .add-shadow {
-                box-shadow: 0px 1px 10px black;
-            }
-            input, select {
-                max-width: 90%;
-            }
-            .modal input, .modal select {
-                max-width: 100%;
-            }
-            .icon {
-                border: none;
-                background: none;
-            }
-        </style>
+        <link rel="stylesheet" href="ccb.css">
     </head>
     <body>
-    <!--Navigation Bar-->
-        <nav class="navbar">
-            <div class="container">
-                <a class="active" href="landing_page.php">
-                    <img src="pics/CCB Logo.png" width="50px" height="50px"/>
-                    Chew Chew Bakeshop
-                </a>
-                <li>
-                    <a class="mx-5" href="products.php">Products</a>
-                    <a href=""><?php echo $_SESSION['username'] ?></a>
-                </li>
-            </div>
-        </nav>
+        <!--Navigation Bar-->
+        <?php include_once "navbar.php"; ?>
         
         <div class="container pt-5">
             <div class="row mt-5">
+                <!--New Product Form-->
                 <div class="col-3" style="position:fixed;">
                     <h3 class="mb-3">New Product</h3>
                     
-                    <!--display alert when product is added successfully or not-->
+                    <!--displays alert when product is added successfully or not-->
                     <?php
                     if(isset($_GET['new_product'])){
                         switch($_GET['new_product']){
@@ -74,7 +30,7 @@
                     ?>
                     
                     <!--form for adding product-->
-                    <form action="new_product.php" enctype="multipart/form-data" method="post">
+                    <form action="new_product.php" enctype="multipart/form-data" method="post" class="new-product">
                         <div class="my-3">
                             <label for="new_item_name" class="form-label">Product</label>
                             <input type="text" id="new_item_name" required name="new_item_name" class="form-control">
@@ -103,8 +59,8 @@
 
                 </div>
                 <div class="col-3"></div>
+                <!--Product Records-->
                 <div class="col-9">
-                    <!--display records of product-->
                     <h3>Product Records</h3>
                     <?php
                         $productlist = query($conn, "SELECT i.item_id, i.item_name, i.item_price, i.item_imgdir, c.category_id, c.category_name FROM items i JOIN category c ON i.category_id = c.category_id WHERE i.item_status='A' ORDER BY i.item_id ASC");
@@ -117,15 +73,17 @@
                                         break;
                                 }
                             }
-                        echo "<hr>";
+                    ?>
+                        <hr>
 
-                        echo "<table class='table table-bordered'>";
-                        echo "<thead>";
-                             echo "<th>Image</th>";
-                             echo "<th>Product</th>";
-                             echo "<th>Price</th>";
-                             echo "<th>Action</th>";
-                        echo "</thead>";
+                        <table class='table table-bordered'>
+                        <thead>
+                             <th>Image</th>
+                             <th>Product</th>
+                             <th>Price</th>
+                             <th>Action</th>
+                        </thead>
+                    <?php 
                         foreach($productlist as $key => $row) {
                             $item_id = $row['item_id'];
                             $item_name = $row['item_name'];
@@ -140,13 +98,13 @@
                                 echo "<td width=15%> <a class='btn btn-danger' href='product_delete.php?item_id=". $item_id ."' > Delete </a> </td>";
                             echo "</tr>";
                             ?>
-                            <!--modal for updating product-->
+                            <!--Product Update Modal-->
                             <div class="modal fade" tabindex="-1" id="update<?php echo $item_id; ?>" role="dialog">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content" style="border-radius:15px;">
                                         <div class="modal-header" style="background-color:#FF8E7B; border-radius:15px 15px 0 0;">
                                             <h4 class="modal-title">Update Product</h4>
-                                            <button type="button" class="icon bi-x-lg" data-dismiss="modal"></button>
+                                            <button type="button" class="bi bi-x-lg" data-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body px-4">
                                             <!--form for updating product-->
@@ -201,17 +159,7 @@
         </div>
     </body>
     <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="js\jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script>
-        //adds shadow to the bottom of navbar when scrolled
-        window.addEventListener('scroll', function(){
-            const shadow = document.querySelector('.navbar');
-            if(window.pageYOffset>3){
-                shadow.classList.add("add-shadow");
-            }else{
-                shadow.classList.remove("add-shadow");
-            }
-        });
-    </script>
+    <script type="text/javascript" src="ccb.js"></script>
 </html>
