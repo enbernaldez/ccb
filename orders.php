@@ -3,6 +3,8 @@
 include_once "db_conn.php";
 
 $user_id = $_SESSION['user_id'];
+$_SESSION['location'] = "orders";
+$loc = $_SESSION['location'];
 
 ?>
 
@@ -21,59 +23,30 @@ $user_id = $_SESSION['user_id'];
         <?php include_once "navbar.php"; ?>
         <div class="container" 
              style="padding-top: 80px;">
-            <div class="row">
+            <div class="row pt-4">
                 <div class="col">
                     <?php
-                    if(isset($_POST['checklist'])) {
-                        $list = $_POST['checklist'];
+                    if(isset($_SESSION['list'])) {
                     ?>
                         <form action="checkout.php" 
                               method="post">
-                            <table class="table">
-                                <h4 class="header">Confirm Order</h4>
-                                <label for="reference_number" 
-                                       class="form-label" 
-                                       style="float: left;
-                                              line-height: 40px;">
-                                    Reference Number:
-                                </label>
-                                <span style="display: block; 
-                                             overflow: hidden;">
-                                    <input name="reference_number"
-                                           id="reference_number"
-                                           type="text"
-                                           value="<?php echo gen_order_ref_num(16); ?>"
-                                           readonly="readonly"
-                                           class="form-control"
-                                           style="width: 95%;
-                                                  float: right;
-                                                  background-color: #FFEFC1; 
-                                                  font-family: Consolas; 
-                                                  font-size: 19px;
-                                                  padding-left: 14px">
-                                </span>
-                        <?php
-                        $total = 0;
-                        
-                        foreach($list as $c) {
-                            $add_filter = "AND order_id = $c";
-                            echo display_table($conn, $user_id, 'C', $add_filter);
-                        }
-                        ?>
-                            </table>
+                            <h4 class="header">Confirm Order</h4>
+                            <?php
+                            $list = $_SESSION['list'];
+                            echo display_tables($conn, $user_id, 'C', $list, $loc);
+                            ?>
                         </form>
                     <?php
+                    unset($_SESSION['list']);
                     } else {
                     ?>
-                        <form action="orders.php"
+                        <form action="cart_action.php"
                               method="post">
                             <h4 class="header">Cart</h4>
-                            <table class="table">
                             <?php   
-                            $add_filter = '';
-                            echo display_table($conn, $user_id, 'C', $add_filter); 
+                            $list = '';
+                            echo display_tables($conn, $user_id, 'C', $list, $loc); 
                             ?>
-                            </table>
                         </form>
                     <?php
                     }
@@ -81,16 +54,21 @@ $user_id = $_SESSION['user_id'];
                 </div>
 <!--Pending Orders-->
                 <div class="col">
-                    <h4 class="header">Pending Orders</h4>
-                    <table class="table">
-                        <?php
-                        $add_filter = '';
-                        echo display_table($conn, $user_id, 'P', $add_filter);
-                        ?>                    
-                    </table>
+                    <form action="order_action.php"
+                          method="post">
+                        <h4 class="header">Pending Orders</h4>
+                            <?php
+                            $list = '';
+                            echo display_tables($conn, $user_id, 'P', $list, $loc);
+                            ?>
+                    </form>
                 </div>
                 <div class="col" style="background-color:#999">zxcvbnm</div>
             </div>
         </div>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="ccb.js"></script>
     </body>
 </html>
