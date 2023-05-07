@@ -1,3 +1,17 @@
+<?php
+
+include_once "db_conn.php";
+
+if(isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+} else {
+    $user_id = '';
+}
+$_SESSION['location'] = "products";
+$loc = $_SESSION['location'];
+
+?>
+
 <!DOCTYPE html>
 <html>
     <?php include_once "db_conn.php"; ?>
@@ -114,47 +128,11 @@
                 <!--cart section-->
                 <div class="col-4">
                     <div class="container my-5">
-                        <form action="orders.php" method="post">
+                        <form action="cart_action.php" method="post">
                             <h4 class="header">Cart</h4>
-                            <?php
-                            echo "<table class='table'>";
-
-                            $user_id = $_SESSION['user_id'];
-                            $sql = "SELECT * FROM cart_section WHERE user_id = $user_id";
-                            $result = query($conn, $sql);
-                                
-                            echo "<thead valign='middle'>";
-                                echo "<th></th>";
-                                echo "<th colspan='2'>Product</th>";
-                                echo "<th>Price</th>";
-                                echo "<th>Qty</th>";
-                                echo "<th>Subtotal</th>";
-                            echo "</thead>";
-                            
-                            $total = 0;
-
-                            foreach($result as $key => $row) {
-                                $order_id = $row['order_id'];
-                                $item_imgdir = $row['item_imgdir'];
-                                $item_name = $row['item_name'];
-                                $item_price = $row['item_price'];
-                                $order_qty = $row['order_qty'];
-                                $subtotal = $row['subtotal'];
-
-                                echo "<tr valign='middle'>";
-                                    echo "<td><input type='checkbox' class='table-data' name='checklist[]' value='" . $order_id . "'></td>";
-                                    echo "<td><img src='" . $item_imgdir . "' width='60px' height='60px'></td>";
-                                    echo "<td class='table-data'>" . $item_name . "</td>";
-                                    echo "<td class='table-data'>₱" . $item_price . "</td>";
-                                    echo "<td class='table-data'>" . $order_qty . "</td>";
-                                    echo "<td class='table-data'>₱" . number_format($subtotal, 2, '.', ',') . "</td>";
-                                echo "</tr>";
-                            }
-                                echo "<tr valign='middle'>";
-                                    echo "<td colspan='4'></td>";
-                                    echo "<td colspan='2'><button class='btn btn-primary table-data' style='float: right;'>Checkout</button></th>";
-                                echo "</tr>";
-                            echo "</table";
+                            <?php   
+                            $list = '';
+                            echo display_tables($conn, $user_id, 'C', $list, $loc); 
                             ?>
                         </form>
                     </div>
