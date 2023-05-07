@@ -1,8 +1,15 @@
+<?php
+if(isset($_SESSION['user_id'])) {
+    $home = "home_page.php";
+} else {
+    $home = "landing_page.php";
+}
+?>
 <!--Navigation Bar-->
     <nav class="navbar">
         <div class="container">
             <a class="active" 
-               href="landing_page.php">
+               href="<?php echo $home; ?>">
                 <img src="pics/CCB Logo.png" 
                      width="50px" 
                      height="50px"/>
