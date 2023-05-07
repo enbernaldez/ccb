@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2023 at 12:44 PM
+-- Generation Time: May 07, 2023 at 02:11 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -32,6 +32,50 @@ CREATE TABLE `best_sellers` (
 ,`item_name` varchar(255)
 ,`item_imgdir` varchar(255)
 ,`order_ct` bigint(21)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart`
+--
+
+CREATE TABLE `cart` (
+  `cart_id` int(255) NOT NULL,
+  `user_id` int(255) NOT NULL,
+  `item_id` int(255) NOT NULL,
+  `cart_qty` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`cart_id`, `user_id`, `item_id`, `cart_qty`) VALUES
+(8, 14, 9, 3),
+(9, 14, 6, 1),
+(10, 14, 10, 12),
+(11, 5, 5, 1),
+(12, 5, 10, 12),
+(13, 5, 8, 2),
+(14, 6, 1, 24),
+(15, 6, 5, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `cart_section`
+-- (See below for the actual view)
+--
+CREATE TABLE `cart_section` (
+`order_id` int(255)
+,`user_id` int(16)
+,`item_id` int(255)
+,`item_name` varchar(255)
+,`item_imgdir` varchar(255)
+,`item_price` decimal(11,2)
+,`order_qty` int(255)
+,`subtotal` decimal(65,2)
 );
 
 -- --------------------------------------------------------
@@ -116,7 +160,7 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `category_id`, `discount_id`, `item_name`, `item_price`, `item_imgdir`, `date_added`, `item_status`) VALUES
 (1, 3, NULL, 'Chocolate Cupcakes', '15.00', 'products/Chocolate Cupcakes.jpg', '2023-03-24 23:17:22', 'A'),
-(2, 4, NULL, 'Mocha Cream Pie', '480.00', 'products/Mocha Cream Pie.jpg', '2023-03-24 23:28:29', 'A'),
+(2, 4, NULL, 'Mocha Cream Pie', '480.00', 'products/Mocha Cream Pie.jpg', '2023-03-24 23:28:29', 'I'),
 (3, 3, NULL, 'Unicorn Cupcakes', '18.00', 'products/Unicorn Cupcakes.jpg', '2023-03-24 23:28:29', 'A'),
 (4, 1, NULL, 'Black Forest Cake', '540.00', 'products/Black Forest Cake.jpg', '2023-03-24 23:38:03', 'A'),
 (5, 1, NULL, 'Red Velvet Cake', '110.00', 'products/Red Velvet Cake.jpg', '2023-03-24 23:38:03', 'A'),
@@ -143,39 +187,91 @@ CREATE TABLE `orders` (
   `order_id` int(255) NOT NULL,
   `user_id` int(255) NOT NULL,
   `item_id` int(255) NOT NULL,
+  `order_ref_num` varchar(16) NOT NULL,
   `order_qty` int(255) NOT NULL,
-  `order_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `order_status` char(1) NOT NULL DEFAULT 'P' COMMENT 'P = Pending / S = Shipped/ C = Cancelled',
-  `order_message` varchar(255) NOT NULL,
-  `order_duedate` datetime NOT NULL
+  `last_update` datetime NOT NULL DEFAULT current_timestamp(),
+  `order_status` char(1) NOT NULL DEFAULT 'C' COMMENT 'C = Cart / P = Pending / D = Delivered / X = Cancelled'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `user_id`, `item_id`, `order_qty`, `order_date`, `order_status`, `order_message`, `order_duedate`) VALUES
-(1, 8, 6, 2, '2023-03-26 17:10:14', 'P', 'Throw each of these on my Malcolm and Dewey and tell them I said hello.', '2023-03-26 11:06:09'),
-(2, 11, 7, 1, '2023-03-26 17:11:35', 'P', '', '2023-03-26 11:10:26'),
-(3, 11, 9, 1, '2023-03-26 17:17:04', 'P', 'Please write \'Happy Birthday, Hun!\' on it.', '2023-03-26 11:11:41'),
-(4, 6, 1, 24, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(5, 5, 5, 3, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(6, 10, 12, 4, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(7, 9, 8, 4, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(8, 7, 10, 12, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(9, 7, 1, 12, '2023-03-26 17:17:04', 'P', '', '2023-03-26 11:11:41'),
-(10, 9, 12, 4, '2023-03-26 17:21:30', 'P', 'MY SON SO DUMB IQ 21.\r\n\r\n', '2023-03-26 11:17:31'),
-(11, 5, 10, 60, '2023-03-26 17:21:30', 'P', 'OBAMA GRILLED CHEESE SANDWICH', '2023-03-26 11:17:31'),
-(12, 7, 2, 3, '2023-03-26 17:21:30', 'P', '', '2023-03-26 11:17:31'),
-(13, 9, 8, 4, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(14, 11, 11, 5, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(15, 7, 4, 3, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(16, 7, 4, 1, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(17, 5, 5, 3, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(18, 10, 7, 3, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(19, 9, 3, 30, '2023-03-26 17:27:31', 'P', '', '2023-03-26 11:25:48'),
-(20, 8, 5, 2, '2023-03-29 16:36:22', 'P', 'qwertyuiop', '2023-03-29 10:36:01'),
-(21, 6, 13, 4, '2023-04-10 00:34:47', 'P', '', '2023-04-09 18:34:13');
+INSERT INTO `orders` (`order_id`, `user_id`, `item_id`, `order_ref_num`, `order_qty`, `last_update`, `order_status`) VALUES
+(1, 8, 6, '81D5S4C2A7C3H8J1', 2, '2023-05-07 06:38:29', 'P'),
+(2, 11, 7, '', 1, '2023-03-26 17:11:35', 'C'),
+(3, 11, 9, '', 1, '2023-03-26 17:17:04', 'C'),
+(4, 6, 1, '', 30, '2023-03-26 17:17:04', 'C'),
+(5, 5, 5, '40Z0X0H8T1U9K6D9', 3, '2023-05-05 00:00:00', 'P'),
+(6, 10, 12, '', 4, '2023-03-26 17:17:04', 'C'),
+(7, 9, 8, '', 4, '2023-03-26 17:17:04', 'C'),
+(8, 7, 10, '48L1K4F5T7P0U4X1', 12, '2023-03-26 17:17:04', 'P'),
+(9, 7, 1, '48L1K4F5T7P0U4X1', 12, '2023-03-26 17:17:04', 'P'),
+(10, 9, 12, '', 4, '2023-03-26 17:21:30', 'C'),
+(11, 5, 10, '', 60, '2023-05-07 07:57:37', 'X'),
+(12, 7, 2, '', 3, '2023-03-26 17:21:30', 'C'),
+(14, 11, 11, '', 5, '2023-03-26 17:27:31', 'C'),
+(15, 7, 4, '', 3, '2023-05-07 07:52:52', 'X'),
+(18, 10, 7, '', 3, '2023-03-26 17:27:31', 'C'),
+(19, 9, 3, '02V7O5K0W6J3X2M9', 36, '2023-03-26 17:27:31', 'P'),
+(20, 8, 5, '65K9L2C5S3M7L2Y9', 2, '2023-05-05 13:29:43', 'P'),
+(21, 6, 13, '90L1V4U1R5J3K0T7', 4, '2023-04-10 00:34:47', 'P'),
+(22, 14, 12, '', 2, '2023-05-07 07:51:31', 'X'),
+(23, 14, 15, '83L7Y6H4W3B0S3D1', 19, '2023-04-18 04:14:57', 'P'),
+(24, 5, 13, '69C7Y2O3H1Z6A0N7', 5, '2023-05-07 19:15:27', 'X'),
+(25, 14, 13, '83L7Y6H4W3B0S3D1', 2, '2023-05-01 19:48:22', 'P'),
+(26, 6, 15, '88P3Q2W3D0D9N6X9', 6, '2023-05-03 11:58:36', 'P'),
+(27, 7, 7, '', 1, '2023-05-07 17:58:03', 'X'),
+(28, 7, 14, '29U3K9N4G0V1T2V0', 12, '2023-05-04 09:46:24', 'P'),
+(29, 5, 8, '01M7I2I3M2L1O0X4', 1, '2023-05-07 19:15:24', 'X'),
+(30, 5, 6, '76U8B2W1H0V7Z1P1', 1, '2023-05-07 19:15:20', 'X'),
+(31, 5, 9, '01M7I2I3M2L1O0X4', 1, '2023-05-07 19:15:24', 'X'),
+(32, 5, 17, '37F1P5R1U5T0W3X0', 1, '2023-05-07 19:15:13', 'X'),
+(33, 5, 1, '', 6, '2023-05-07 08:02:53', 'X'),
+(34, 14, 5, '39Z1R5B7B0Y2W5X0', 1, '2023-05-07 19:15:47', 'X'),
+(35, 7, 15, '29U3K9N4G0V1T2V0', 18, '2023-05-04 19:33:47', 'P'),
+(36, 6, 9, '', 1, '2023-05-04 22:22:14', 'C'),
+(37, 8, 10, '81D5S4C2A7C3H8J1', 12, '2023-05-07 06:38:29', 'P'),
+(38, 7, 12, '', 1, '2023-05-07 07:52:32', 'X'),
+(39, 7, 3, '', 6, '2023-05-07 17:57:09', 'X'),
+(40, 15, 12, '50Y1Z0N7G6S8H6O4', 3, '2023-05-07 08:28:49', 'P'),
+(41, 15, 5, '', 1, '2023-05-07 08:05:06', 'C'),
+(42, 15, 10, '47X0J4M3E4U9E2X4', 5, '2023-05-07 08:38:06', 'P'),
+(43, 15, 15, '47X0J4M3E4U9E2X4', 5, '2023-05-07 08:38:06', 'P'),
+(44, 15, 16, '', 1, '2023-05-07 08:05:49', 'C'),
+(45, 15, 17, '', 1, '2023-05-07 08:05:51', 'C'),
+(46, 7, 15, '74L9X1R3F0J9N7V8', 6, '2023-05-07 19:14:18', 'X'),
+(47, 7, 1, '', 12, '2023-05-07 18:10:52', 'X'),
+(48, 7, 11, '', 2, '2023-05-07 18:20:46', 'X'),
+(49, 16, 12, '63P7Y0P6P2B6A2M1', 3, '2023-05-07 19:47:05', 'X'),
+(50, 16, 10, '63P7Y0P6P2B6A2M1', 6, '2023-05-07 19:47:05', 'X'),
+(51, 16, 15, '63P7Y0P6P2B6A2M1', 6, '2023-05-07 19:47:05', 'X'),
+(52, 16, 1, '63P7Y0P6P2B6A2M1', 12, '2023-05-07 19:47:05', 'X'),
+(53, 16, 5, '63P7Y0P6P2B6A2M1', 1, '2023-05-07 19:47:05', 'X'),
+(54, 16, 4, '63P7Y0P6P2B6A2M1', 1, '2023-05-07 19:47:05', 'X'),
+(55, 16, 12, '', 6, '2023-05-07 19:47:44', 'X'),
+(56, 16, 12, '30J3C9M5F1W2F7E2', 2, '2023-05-07 19:48:32', 'P'),
+(57, 16, 13, '76R7D0W0H2W9Z0N9', 1, '2023-05-07 20:06:10', 'P'),
+(58, 16, 15, '76R7D0W0H2W9Z0N9', 30, '2023-05-07 20:06:10', 'P'),
+(59, 16, 4, '90G0B3U0C6X6R5X6', 1, '2023-05-07 20:10:41', 'P');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `pending_orders`
+-- (See below for the actual view)
+--
+CREATE TABLE `pending_orders` (
+`order_id` int(255)
+,`order_ref_num` varchar(16)
+,`user_id` int(16)
+,`item_id` int(255)
+,`item_name` varchar(255)
+,`item_imgdir` varchar(255)
+,`item_price` decimal(11,2)
+,`order_qty` int(255)
+,`subtotal` decimal(65,2)
+);
 
 -- --------------------------------------------------------
 
@@ -259,7 +355,8 @@ INSERT INTO `users` (`user_id`, `user_name`, `user_fullname`, `user_address`, `u
 (12, 'd.juarez', 'Douglas Juarez', NULL, NULL, 'd.juarez@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$MlBVbU9lQVpJQkJ3ZjZxNg$j4CSgiOshtMFiSehovRUvzmTdfzdsK98+tGdsuDw6oM', 'C', 'A'),
 (13, 'tarnaz_r', 'Reah Tarnaz', NULL, NULL, 'tarnaz_r@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$MXNCdDZ2TnZkd0t1RDZDNg$1RcY1xTZBPuDntoKTLSby6k5IfDKCnVD+m3hCam3I64', 'C', 'A'),
 (14, 'its-a-me.mario', 'Mario Mccarthy', NULL, NULL, 'mario.mccarthy@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$bWxacC9VdTVZZ2R3Mjd0Lg$lVuEQMU3m2jkDsJ+ripMUXQZr+YdoTFegZ7wuC0ZZYA', 'C', 'A'),
-(15, 'london.scotchtape', 'Lyndon Scott', NULL, NULL, 'scottlyndon1912@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHRWQ2IvRHNUYjFvY3RsZA$0bmjk0qFwiWAxbUqi2FNZAhOwFz59rZtWmxUaR08kkA', 'C', 'A');
+(15, 'london.scotchtape', 'Lyndon Scott', NULL, NULL, 'scottlyndon1912@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHRWQ2IvRHNUYjFvY3RsZA$0bmjk0qFwiWAxbUqi2FNZAhOwFz59rZtWmxUaR08kkA', 'C', 'A'),
+(16, 'Muzan', 'Michael Jackson', NULL, NULL, 'michelleJ@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$ODF6UU02VGxoY1F2M010VQ$ERe+I7g0mvjYhvO3twcsqw0mt5nczmuYgpbHWWXgXLQ', 'C', 'A');
 
 -- --------------------------------------------------------
 
@@ -268,11 +365,37 @@ INSERT INTO `users` (`user_id`, `user_name`, `user_fullname`, `user_address`, `u
 --
 DROP TABLE IF EXISTS `best_sellers`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `best_sellers`  AS SELECT `i`.`item_id` AS `item_id`, `i`.`item_name` AS `item_name`, `i`.`item_imgdir` AS `item_imgdir`, count(`i`.`item_id`) AS `order_ct` FROM (`orders` `o` join `items` `i` on(`o`.`item_id` = `i`.`item_id`)) GROUP BY `i`.`item_name` ORDER BY count(`o`.`item_id`) AS `DESCdesc` ASC  ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `best_sellers`  AS SELECT `i`.`item_id` AS `item_id`, `i`.`item_name` AS `item_name`, `i`.`item_imgdir` AS `item_imgdir`, count(`o`.`order_id`) AS `order_ct` FROM (`orders` `o` join `items` `i` on(`i`.`item_id` = `o`.`item_id`)) WHERE `o`.`order_status` = 'D' GROUP BY `i`.`item_id`, `i`.`item_name`, `i`.`item_imgdir` ORDER BY count(`o`.`order_id`) AS `DESCdesc` ASC  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `cart_section`
+--
+DROP TABLE IF EXISTS `cart_section`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `cart_section`  AS SELECT `o`.`order_id` AS `order_id`, `u`.`user_id` AS `user_id`, `i`.`item_id` AS `item_id`, `i`.`item_name` AS `item_name`, `i`.`item_imgdir` AS `item_imgdir`, `i`.`item_price` AS `item_price`, `o`.`order_qty` AS `order_qty`, `i`.`item_price`* `o`.`order_qty` AS `subtotal` FROM ((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) join `items` `i` on(`o`.`item_id` = `i`.`item_id`)) WHERE `i`.`item_status` <> 'I' AND `o`.`order_status` = 'C' ORDER BY `o`.`order_id` ASC  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `pending_orders`
+--
+DROP TABLE IF EXISTS `pending_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `pending_orders`  AS SELECT `o`.`order_id` AS `order_id`, `o`.`order_ref_num` AS `order_ref_num`, `u`.`user_id` AS `user_id`, `i`.`item_id` AS `item_id`, `i`.`item_name` AS `item_name`, `i`.`item_imgdir` AS `item_imgdir`, `i`.`item_price` AS `item_price`, `o`.`order_qty` AS `order_qty`, `i`.`item_price`* `o`.`order_qty` AS `subtotal` FROM ((`orders` `o` join `users` `u` on(`o`.`user_id` = `u`.`user_id`)) join `items` `i` on(`o`.`item_id` = `i`.`item_id`)) WHERE `i`.`item_status` <> 'I' AND `o`.`order_status` = 'P' ORDER BY `o`.`order_id` ASC  ;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `cart`
+--
+ALTER TABLE `cart`
+  ADD PRIMARY KEY (`cart_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `item_id` (`item_id`);
 
 --
 -- Indexes for table `category`
@@ -333,6 +456,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `cart_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
@@ -360,7 +489,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `order_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `price`
@@ -378,18 +507,24 @@ ALTER TABLE `size`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(16) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `user_id` int(16) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `cart`
+--
+ALTER TABLE `cart`
+  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `delivery`
 --
 ALTER TABLE `delivery`
-  ADD CONSTRAINT `delivery_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `delivery_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `delivery_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items`
