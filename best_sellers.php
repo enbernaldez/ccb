@@ -1,10 +1,22 @@
 <?php
-    $sql = "SELECT * FROM best_sellers ORDER BY order_ct DESC;";
+    $sql = "SELECT i.item_id, 
+                   i.item_name, 
+                   i.item_imgdir, 
+                   COUNT(o.order_id) AS order_ct
+            FROM orders o
+            JOIN items i ON i.item_id = o.item_id
+            WHERE o.order_status = 'D'
+            GROUP BY i.item_id, 
+                     i.item_name, 
+                     i.item_imgdir
+            ORDER BY order_ct DESC";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) > 0) {
 ?>
-        <div class="row pt-3"  style="background-color:rgba(229,160,95,0.90); border-radius:10px;">
+        <div class="row pt-3"  
+             style="background-color:rgba(229,160,95,0.90); 
+                    border-radius:10px;">
         <h4 class="header">Best Sellers</h4>
             <?php
             for($i = 0; $i < 2; $i++) { ?>
@@ -17,8 +29,11 @@
                     $order_ct = $row['order_ct'];
                 ?>
                 <div class="img-wrap">
-                    <img src="<?php echo $item_imgdir ?>" alt="<?php echo $item_name ?>"/>
-                    <p class="img-descr"><?php echo $item_name ?></p>
+                    <img src="<?php echo $item_imgdir ?>" 
+                         alt="<?php echo $item_name ?>"/>
+                    <p class="img-descr">
+                        <?php echo $item_name ?>
+                    </p>
                 </div>
                 <?php } ?>
             </div>
