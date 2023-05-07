@@ -46,39 +46,52 @@ $loc = $_SESSION['location'];
                 <div class="col-8">
                     <!--Best Sellers-->
                     <div class="container my-5">
+                        <?php
+                        $sql = "SELECT i.item_id, 
+                                       i.item_name, 
+                                       i.item_imgdir, 
+                                       COUNT(o.order_id) AS order_ct
+                                FROM orders o
+                                JOIN items i ON i.item_id = o.item_id
+                                WHERE o.order_status = 'D'
+                                GROUP BY i.item_id, 
+                                         i.item_name, 
+                                         i.item_imgdir
+                                ORDER BY order_ct DESC";
+                        $result = query($conn, $sql);
+                        
+                        if(!empty($result)) {
+                            foreach($result as $key => $row) {
+                                for($i = 0; $i < 6; $i++) {
+                                    $item_id = $row['item_id'];
+                                    $item_name = $row['item_name'];
+                                    $item_imgdir = $row['item_imgdir'];
+                                    $item_price = $row['item_price'];
+                                    $order_ct = $row['order_ct'];
+                                ?>
                         <h4 class="header">Best Sellers</h4>
                         <div class="row category" style="background-color:#E5825F">
-                            <?php
-                            $sql = "SELECT i.item_id, i.item_name, i.item_imgdir, i.item_price, COUNT(o.item_id) AS order_ct FROM `orders` o JOIN items i on o.item_id = i.item_id WHERE i.item_status = 'A' GROUP BY i.item_name ORDER BY COUNT(o.item_id) DESC";
-                            $result = mysqli_query($conn, $sql);
-                            for($i = 0; $i < 6; $i++) {
-                                $row = mysqli_fetch_assoc($result);
-                                $item_id = $row['item_id'];
-                                $item_name = $row['item_name'];
-                                $item_imgdir = $row['item_imgdir'];
-                                $item_price = $row['item_price'];
-                                $order_ct = $row['order_ct'];
-                            ?>
-                            <div class="col-2">
-                                <div class="img-wrap">
-                                    <img src="<?php echo $item_imgdir ?>" alt="<?php echo $item_name ?>"/>
-                                    <p class="img-descr"><?php echo $item_name . "<br>₱" . $item_price ?></p>
-                                    
-                                    <form action="add_to_cart.php" method="post">
-                                        <div class="input-group">
-                                            <input type="hidden" name="item_id" id="item_id" value="<?php echo $item_id; ?>">
-                                            <input type="number" class="form-control quantity" id="cart_qty" required name="cart_qty" value="1" min="1">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn button" >
-                                                    <i class="bi-cart-fill"></i>
-                                                </button>
+                                <div class="col-2">
+                                    <div class="img-wrap">
+                                        <img src="<?php echo $item_imgdir ?>" alt="<?php echo $item_name ?>"/>
+                                        <p class="img-descr"><?php echo $item_name . "<br>₱" . $item_price ?></p>
+
+                                        <form action="add_to_cart.php" method="post">
+                                            <div class="input-group">
+                                                <input type="hidden" name="item_id" id="item_id" value="<?php echo $item_id; ?>">
+                                                <input type="number" class="form-control quantity" id="cart_qty" required name="cart_qty" value="1" min="1">
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn button" >
+                                                        <i class="bi-cart-fill"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            <?php } ?>
                         </div>
+                                <?php }} ?>
+                        <?php } ?>
                     </div>
                     <!--display products of each-->
                     <?php
