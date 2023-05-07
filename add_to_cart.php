@@ -1,12 +1,25 @@
 <?php
 include_once "db_conn.php";
 
+if(!isset($_SESSION['user_id'])) {
+    header("location: landing_page.php");
+    exit;
+}
+
 if(null !==($_POST['item_id'] && $_POST['cart_qty'])) {
     $a_user_id = $_SESSION['user_id'];
     $a_item_id = $_POST['item_id'];
     $a_cart_qty = $_POST['cart_qty'];
     
-    $sql = "SELECT `order_id`, `user_id`, `item_id`, `order_qty`, `order_status` FROM `orders` WHERE `user_id` = ? && `item_id` = ?";
+    $sql = "SELECT `order_id`,
+                   `user_id`, 
+                   `item_id`, 
+                   `order_qty`, 
+                   `order_status` 
+            FROM `orders` 
+            WHERE `user_id` = ? 
+              AND `item_id` = ?
+              AND `order_status` = 'C'";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "ii", $a_user_id, $a_item_id);
     mysqli_stmt_execute($stmt);
