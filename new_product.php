@@ -13,7 +13,7 @@ if(isset($_POST['new_item_name']) && $_FILES['new_item_image']['error'] == '0') 
     $fileext = pathinfo($file, PATHINFO_EXTENSION); //ext
 
     $temp = $_FILES['new_item_image']['tmp_name']; //temporary location
-    $n_itemimgdir = "products/" . $u_itemname . "." . $fileext; ///target location
+    $n_itemimgdir = "products/" . $n_itemname . "." . $fileext; ///target location
 
     //preparing arguments for insert()
     $table = "items";
