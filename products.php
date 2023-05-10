@@ -7,7 +7,7 @@ if(isset($_SESSION['user_id'])) {
 } else {
     $user_id = '';
 }
-$_SESSION['location'] = "products";
+$_SESSION['location'] = "products.php";
 $loc = $_SESSION['location'];
 
 ?>
@@ -50,10 +50,12 @@ $loc = $_SESSION['location'];
                         $sql = "SELECT i.item_id, 
                                        i.item_name, 
                                        i.item_imgdir, 
+                                       i.item_price,
                                        COUNT(o.order_id) AS order_ct
                                 FROM orders o
                                 JOIN items i ON i.item_id = o.item_id
                                 WHERE o.order_status = 'D'
+                                  AND i.item_status = 'A'
                                 GROUP BY i.item_id, 
                                          i.item_name, 
                                          i.item_imgdir
@@ -61,19 +63,21 @@ $loc = $_SESSION['location'];
                         $result = query($conn, $sql);
                         
                         if(!empty($result)) {
+                            ?>
+                            <h4 class='header'>Best Sellers</h4>
+                            <div class='row category' style='background-color:#E5825F'>
+                                <?php
+                            $i = 0;
                             foreach($result as $key => $row) {
-                                for($i = 0; $i < 6; $i++) {
                                     $item_id = $row['item_id'];
                                     $item_name = $row['item_name'];
                                     $item_imgdir = $row['item_imgdir'];
                                     $item_price = $row['item_price'];
                                     $order_ct = $row['order_ct'];
                                 ?>
-                        <h4 class="header">Best Sellers</h4>
-                        <div class="row category" style="background-color:#E5825F">
                                 <div class="col-2">
                                     <div class="img-wrap">
-                                        <img src="<?php echo $item_imgdir ?>" alt="<?php echo $item_name ?>"/>
+                                        <img src="<?php echo $item_imgdir; ?>" alt="<?php echo $item_name; ?>"/>
                                         <p class="img-descr"><?php echo $item_name . "<br>₱" . $item_price ?></p>
 
                                         <form action="add_to_cart.php" method="post">
@@ -89,8 +93,14 @@ $loc = $_SESSION['location'];
                                         </form>
                                     </div>
                                 </div>
+                                <?php 
+                                    $i++;
+                                if($i >= 6) {
+                                    break;
+                                }
+                                }
+                                ?>
                         </div>
-                                <?php }} ?>
                         <?php } ?>
                     </div>
                     <!--display products of each-->
@@ -139,7 +149,9 @@ $loc = $_SESSION['location'];
                     <?php } ?>
                 </div>
                 <!--cart section-->
-                <div class="col-4">
+                <div class="col-4"
+                     style="position: fixed;
+                            right: 30px;">
                     <div class="container my-5">
                         <form action="cart_action.php" method="post">
                             <h4 class="header">Cart</h4>
