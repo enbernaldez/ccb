@@ -1,43 +1,53 @@
 <?php
 include_once "db_conn.php";
 
-$loc = $_SESSION['location'];
+//checks if value of name="new_item_name" is set and if file is uploaded successfully
+if(isset($_POST['new_item_name']) && $_FILES['new_item_image']['error'] == '0') {
 
-if(isset($_POST['cancel'])) {
-    date_default_timezone_set("Asia/Manila");
+    //transfers value of name="" from form to variable
+    $n_itemname = $_POST['new_item_name']; //itemname
+    $n_itemcat = $_POST['new_item_cat'];
+    $n_itemprice = $_POST['new_item_price'];
 
-    $ref_num = $_POST['ref_num'];
+    $file = $_FILES['new_item_image']['name']; //basename.ext
+    $fileext = pathinfo($file, PATHINFO_EXTENSION); //ext
 
-    $sql = "SELECT order_id, order_status
-            FROM orders	
-            WHERE order_ref_num = '" . $ref_num . "'
-              AND order_status = 'P'
-            GROUP BY order_id";
-    $result = query($conn, $sql);
-    $update = 0;
-    foreach($result as $key => $row) {
+    $temp = $_FILES['new_item_image']['tmp_name']; //temporary location
+    $n_itemimgdir = "products/" . $n_itemname . "." . $fileext; ///target location
 
-        $table = "orders";
-        $fields = array( 'order_status' => 'X'
-                       , 'last_update' => date("Y-m-d H:i:s")
-                       );
-        $filter = array( 'order_id' => $row['order_id'] );
+    //preparing arguments for insert()
+    $table = "items";
+    $fields = array ('item_name' => $n_itemname
+                    ,'category_id' => $n_itemcat
+                    ,'item_price' => $n_itemprice
+                    ,'item_imgdir' => $n_itemimgdir
+                    );
 
-        if(update($conn, $table, $fields, $filter)) {
-            $update++;
+    //retrieves info from db
+    $sql = "SELECT `item_name`, `category_id`, `item_price`, `item_imgdir` FROM `items` WHERE `item_name` = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $n_itemname);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    //if file is successfully moved to target loc:
+    if(move_uploaded_file($temp, $n_itemimgdir)) {
+        //if $result is empty, the param $n_itemname does not exist in db
+        if(mysqli_num_rows($result) > 0) {
+            header("location: product_index.php?new_product=failed");
+            exit();
+        }
+        //inserts arguments to db
+        else {
+            if(insert($conn, $table, $fields)) {
+                header("location: product_index.php?new_product=success");
+                exit();
+            } else {
+                header("location: landing_page.php?new_product=failed");
+                exit();
+            }
         }
     }
-
-    if($update != 0) {
-        header("location: " . $loc . ".php?order_delete=success");
-        exit();
-    } else {
-        header("location: " . $loc . ".php?order_delete=failed");
-        exit();
-    }
-} else {
-    header("location: " . $loc . ".php");
-    exit;
+    mysqli_free_result($result);        
 }
-
 ?>
