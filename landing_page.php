@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html>
-    <?php include_once "db_conn.php"; ?>
+    <?php
+    include_once "db_conn.php"; 
+    $_SESSION['user_type'] = 'V';
+    $_SESSION['seller_bg'] = '#E5A05F';
+    ?>
     <head>
         <meta charset="UTF-8">
         <title>Chew Chew Bakeshop</title>
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="bootstrap-icons-1.9.1/bootstrap-icons.css">
         <link rel="stylesheet" href="ccb.css">
+        <style>
+            #carousel {
+                height: auto;
+            }
+        </style>
     </head>
     <body>
     <!--Navigation Bar-->
@@ -28,25 +37,81 @@
                                         <div class="col-3 pt-5">
                                             <h4 class="header" id="login">Log In</h4>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="alert">
                                             <!--displays alert for failed logins-->
                                             <?php
                                             if(isset($_GET['login'])){
                                                 switch($_GET['login']){
-                                                    case "wrongpass": echo "<div class='alert alert-warning'>Wrong password.
-                                                    <button type='button' class='close bi bi-x-lg' style='float:right;' data-dismiss='alert' aria-label='Close'></button></div>";
+                                                    case "wrongpass":
+                                                        echo "
+                                                        <div class='alert alert-warning'>
+                                                            Wrong password. Please try again.
+                                                            <button type='button' 
+                                                                    class='close bi bi-x-lg' 
+                                                                    style='float:right;' 
+                                                                    data-dismiss='alert' 
+                                                                    aria-label='Close'>
+                                                            </button>
+                                                        </div>";
                                                         break;
-                                                    case "notreg": echo "<div class='alert alert-warning'>Username not registered.
-                                                    <button type='button' class='close bi bi-x-lg' style='float:right;' data-dismiss='alert' aria-label='Close'></button></div>";
+                                                    case "notreg": 
+                                                        echo "
+                                                        <div class='alert alert-warning'>
+                                                            Username not registered. Please register first.
+                                                            <button type='button' 
+                                                                    class='close bi bi-x-lg' 
+                                                                    style='float:right;' 
+                                                                    data-dismiss='alert' 
+                                                                    aria-label='Close'>
+                                                            </button>
+                                                        </div>";
                                                         break;
-                                                    case "unidstat": echo "<div class='alert alert-warning'>Unable to identify privilege.
-                                                    <button type='button' class='close bi bi-x-lg' style='float:right;' data-dismiss='alert' aria-label='Close'></button></div>";
+                                                    case "unidtype": 
+                                                        echo "
+                                                        <div class='alert alert-warning'>
+                                                            Unable to identify privilege.
+                                                            <button type='button' 
+                                                                    class='close bi bi-x-lg' 
+                                                                    style='float:right;' 
+                                                                    data-dismiss='alert' 
+                                                                    aria-label='Close'>
+                                                            </button>
+                                                        </div>";
+                                                        break;
+                                                }
+                                            }
+                                            if(isset($_GET['registration'])){
+                                                switch($_GET['registration']){
+                                                    case "existing":
+                                                        echo "
+                                                        <div class='alert alert-warning'
+                                                             style='z-index: 11;'>
+                                                            Account is already registered. Please try again.
+                                                            <button type='button' 
+                                                                    class='close bi bi-x-lg' 
+                                                                    style='float:right;' 
+                                                                    data-dismiss='alert' 
+                                                                    aria-label='Close'>
+                                                            </button>
+                                                        </div>";
+                                                        break;
+                                                    case "failed": 
+                                                        echo "
+                                                        <div class='alert alert-warning'>
+                                                            Failed to register your account. Please try again.
+                                                            <button type='button' 
+                                                                    class='close bi bi-x-lg' 
+                                                                    style='float:right;' 
+                                                                    data-dismiss='alert' 
+                                                                    aria-label='Close'>
+                                                            </button>
+                                                        </div>";
                                                         break;
                                                 }
                                             }
                                             ?>
                                         </div>
-                                        <div class="col-3"></div>
+                                        <div class="col-2"></div>
                                         <form action="login.php" method="post">
                                             <div class="flex-login my-2">
                                                 <div>
@@ -83,6 +148,14 @@
                                                     <input type="text" id="reg_fullname" required name="reg_fullname" class="form-control">
                                                 </div>
                                                 <div class="mb-3">
+                                                    <label for="reg_address" class="form-label">Address</label>
+                                                    <input type="text" id="reg_address" required name="reg_address" class="form-control">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="reg_contactno" class="form-label">Contact Number</label>
+                                                    <input type="text" id="reg_contactno" required name="reg_contactno" class="form-control">
+                                                </div>
+                                                <div class="mb-3">
                                                     <label for="reg_emailadd" class="form-label">Email</label>
                                                     <input type="email" id="reg_emailadd" required name="reg_emailadd" class="form-control">
                                                 </div>
@@ -90,16 +163,6 @@
                                                     <label for="reg_username" class="form-label">Username</label>
                                                     <input type="text" id="reg_username" required name="reg_username" class="form-control">
                                                 </div>
-<!--
-                                                <div class="mb-4">
-                                                    <label for="reg_password" class="form-label">Password</label>
-                                                    <div class="toggle_pwd">
-                                                        <input type="checkbox" id="pwd_toggle" onclick="toggle_pwd()" class="mx-2">
-                                                        <label for="pwd_toggle" class="form-label">Show Password</label>
-                                                    </div>
-                                                    <input type="password" id="reg_password" required name="reg_password" class="form-control">
-                                                </div>
--->
                                                 <div class="mb-4">
                                                     <label for="reg_password" class="form-label">Password</label>
                                                     <div class="input-group mb-4">
