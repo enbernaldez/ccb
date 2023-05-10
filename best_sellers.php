@@ -15,12 +15,12 @@
     if (mysqli_num_rows($result) > 0) {
 ?>
         <div class="row pt-3"  
-             style="background-color:rgba(229,160,95,0.90); 
+             style="background-color:<?php echo $_SESSION['seller_bg']; ?>; 
                     border-radius:10px;">
-        <h4 class="header">Best Sellers</h4>
+            <h4 class="header pb-3">Best Sellers</h4>
             <?php
             for($i = 0; $i < 2; $i++) { ?>
-            <div class="flex-products pt-3">
+            <div class="flex-products">
                 <?php
                 for($j = 0; $j < 3; $j++) {
                     $row = mysqli_fetch_assoc($result);
