@@ -3,7 +3,7 @@
 include_once "db_conn.php";
 
 $user_id = $_SESSION['user_id'];
-$_SESSION['location'] = "orders";
+$_SESSION['location'] = "orders.php";
 $loc = $_SESSION['location'];
 
 ?>
@@ -24,7 +24,7 @@ $loc = $_SESSION['location'];
         <div class="container" 
              style="padding-top: 80px;">
             <div class="row pt-4">
-                <div class="col">
+                <div class="col-6">
                     <?php
                     if(isset($_SESSION['list'])) {
                     ?>
@@ -53,17 +53,40 @@ $loc = $_SESSION['location'];
                     ?>
                 </div>
 <!--Pending Orders-->
-                <div class="col">
-                    <form action="order_action.php"
-                          method="post">
-                        <h4 class="header">Pending Orders</h4>
-                            <?php
-                            $list = '';
-                            echo display_tables($conn, $user_id, 'P', $list, $loc);
-                            ?>
-                    </form>
+                <div class="col-6">
+                    <h4 class="header">Pending Orders</h4>
+                    <?php
+                    $list = '';
+                    echo display_tables($conn, $user_id, 'P', $list, $loc);
+                    ?>
                 </div>
-                <div class="col" style="background-color:#999">zxcvbnm</div>
+            </div>
+            <hr>
+            <div class="row pt-4">
+<!--Baking Orders-->
+                <div class="col-4">
+                    <h4 class="header">Orders In Progress</h4>
+                    <?php
+                    $list = '';
+                    echo display_tables($conn, $user_id, 'B', $list, $loc);
+                    ?>
+                </div>
+<!--Shipping Orders-->
+                <div class="col-4">
+                    <h4 class="header">Orders On The Way</h4>
+                    <?php
+                    $list = '';
+                    echo display_tables($conn, $user_id, 'S', $list, $loc);
+                    ?>
+                </div>
+<!--Delivered Orders-->
+                <div class="col-4">
+                    <h4 class="header">Previously Purchased</h4>
+                    <?php
+                    $list = '';
+                    echo display_tables($conn, $user_id, 'D', $list, $loc);
+                    ?>
+                </div>
             </div>
         </div>
     <script type="text/javascript" src="js/bootstrap.js"></script>
