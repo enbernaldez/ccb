@@ -25,13 +25,15 @@ body {
     background-color: #FFEFC1;
 }
 
-
 /*landing_page*/
 #carousel {
     border-radius: 25px;
     background-color: #E5A05F;
     padding: 20px;
     height: 500px;
+}
+.landing .sellers {
+    background-color: #E5A05F;
 }
 .tagline {
     font-family: Times New Roman;
@@ -107,6 +109,12 @@ input {
 .img-wrap:hover .img-descr {
     visibility: visible;
     opacity: 1;
+}
+.alert {
+    position: absolute;
+    z-index: 11;
+    width: 400px;
+    left: 35px;
 }
 
 
