@@ -20,10 +20,10 @@ if(isset($_POST['checklist'])) {
         }
 
         if(update($conn, $table, $fields, $filter)) {
-            header("location: " . $loc . ".php?cart_delete=success");
+            header("location: " . $loc . "?cart_delete=success");
             exit();
         } else {
-            header("location: " . $loc . ".php?cart_delete=failed");
+            header("location: " . $loc . "?cart_delete=failed");
             exit();
         }
     }
@@ -33,7 +33,7 @@ if(isset($_POST['checklist'])) {
         exit;
     }
 } else {
-    header("location: " . $loc . ".php");
+    header("location: " . $loc);
     exit;
 }
 
