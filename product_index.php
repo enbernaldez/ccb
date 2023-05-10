@@ -6,62 +6,78 @@
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="bootstrap-icons-1.9.1/bootstrap-icons.css">
         <link rel="stylesheet" href="ccb.css">
+        <style>
+            .new_prod {
+                position: fixed; 
+                left: 0; 
+                padding: 50px 10px 50px 40px; 
+                background-color: #E5825F; 
+                height: 100%; 
+                width: 350px;
+            }
+            .new_prod input {
+                width: 100%;
+            }
+            .main {
+                margin-left: 312px;
+                padding: 50px 10px;
+            }
+        </style>
     </head>
     <body>
         <!--Navigation Bar-->
         <?php include_once "navbar.php"; ?>
         
         <div class="container pt-5">
-            <div class="row mt-5">
-                <!--New Product Form-->
-                <div class="col-3" style="position:fixed;">
-                    <h3 class="mb-3">New Product</h3>
-                    
-                    <!--displays alert when product is added successfully or not-->
-                    <?php
-                    if(isset($_GET['new_product'])){
-                        switch($_GET['new_product']){
-                            case "success": echo "<div class='alert alert-success' style='max-width:90%;'>Product Added.</div>";
-                                break;
-                            case "failed": echo "<div class='alert alert-danger' style='max-width:90%;'>Product Not Added</div>";
-                                break;
-                        }
-                    }
-                    ?>
-                    
-                    <!--form for adding product-->
-                    <form action="new_product.php" enctype="multipart/form-data" method="post" class="new-product">
-                        <div class="my-3">
-                            <label for="new_item_name" class="form-label">Product</label>
-                            <input type="text" id="new_item_name" required name="new_item_name" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_item_cat" class="form-label">Category</label>
-                            <select id="new_item_cat" required name="new_item_cat" class="form-select">
-                                <option disabled selected>--select--</option>
-                                <?php
-                                $categorylist = query($conn, "SELECT `category_id`, `category_name` FROM `category`");
-                                foreach ($categorylist as $key => $row) {
-                                    echo "<option value='" . $row['category_id'] . "'>" . $row['category_name'] . "</option>";
-                                } ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_item_price" class="form-label">Price</label>
-                            <input type="text" required id="new_item_price" name="new_item_price" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_item_image" class="form-label">Image</label>
-                            <input type="file" required id="new_item_image" name="new_item_image" class="form-control">
-                        </div>
-                        <input type="submit" class="btn btn-primary mt-3">
-                    </form>
+            <!--New Product Form-->
+            <div class="new_prod">
+                <h4 class="mb-3 header">New Product</h4>
 
-                </div>
-                <div class="col-3"></div>
+                <!--displays alert when product is added successfully or not-->
+                <?php
+                if(isset($_GET['new_product'])){
+                    switch($_GET['new_product']){
+                        case "success": echo "<div class='alert alert-success' style='max-width:90%;'>Product Added.</div>";
+                            break;
+                        case "failed": echo "<div class='alert alert-danger' style='max-width:90%;'>Product Not Added</div>";
+                            break;
+                    }
+                }
+                ?>
+
+                <!--form for adding product-->
+                <form action="new_product.php" enctype="multipart/form-data" method="post" class="new-product">
+                    <div class="my-3">
+                        <label for="new_item_name" class="form-label">Product</label>
+                        <input type="text" id="new_item_name" required name="new_item_name" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_item_cat" class="form-label">Category</label>
+                        <select id="new_item_cat" required name="new_item_cat" class="form-select">
+                            <option disabled selected>--select--</option>
+                            <?php
+                            $categorylist = query($conn, "SELECT `category_id`, `category_name` FROM `category`");
+                            foreach ($categorylist as $key => $row) {
+                                echo "<option value='" . $row['category_id'] . "'>" . $row['category_name'] . "</option>";
+                            } ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_item_price" class="form-label">Price</label>
+                        <input type="text" required id="new_item_price" name="new_item_price" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_item_image" class="form-label">Image</label>
+                        <input type="file" required id="new_item_image" name="new_item_image" class="form-control">
+                    </div>
+                    <input type="submit" class="btn btn-primary mt-3">
+                </form>
+
+            </div>
+        <div class="row">
                 <!--Product Records-->
-                <div class="col-9">
-                    <h3>Product Records</h3>
+                <div class="col-9 main">
+                    <h4 class="header">Product Records</h4>
                     <?php
                         $productlist = query($conn, "SELECT i.item_id, i.item_name, i.item_price, i.item_imgdir, c.category_id, c.category_name FROM items i JOIN category c ON i.category_id = c.category_id WHERE i.item_status='A' ORDER BY i.item_id ASC");
                         echo "<hr>";
@@ -147,12 +163,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <?php
-                        }
-                        echo "</table>";
-
-                    ?>
-
+                        <?php } ?>
+                        </table>
                 </div>
                 <div class="col-1"></div>
             </div>
