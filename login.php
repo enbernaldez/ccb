@@ -22,7 +22,7 @@ if(isset($_POST['login_username']) || null !== ($_SESSION["username"] && $_SESSI
     }
     
     //retrieves info from db
-    $sql = "SELECT `user_id`, `user_name`, `user_pwdhash`, `user_type` FROM `users` WHERE user_name = ?";
+    $sql = "SELECT `user_id`, `user_name`, `user_pwdhash`, `user_type`, `user_status` FROM `users` WHERE user_name = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "s", $l_username);
     mysqli_stmt_execute($stmt);
@@ -32,16 +32,23 @@ if(isset($_POST['login_username']) || null !== ($_SESSION["username"] && $_SESSI
     //transfers value from db to variable
     $_SESSION['user_id'] = $row['user_id'];
     $stored_password = $row['user_pwdhash'];
+    $_SESSION['user_type'] = $row['user_type'];
     $user_type = $row['user_type'];
+    $user_status = $row['user_status'];
 
     //if $result is empty, the param $l_username does not exist in db
     if(mysqli_num_rows($result) == 0) {
         header("location: landing_page.php?login=notreg");
         exit();
     }
-    //verifies the pwd typed vs the pwd stored in db
+    
     else {
-        if(password_verify($l_password, $stored_password)) {
+        if($user_status == 'I') {
+            unset($_SESSION['user_id']);
+            header("location: landing_page.php?account=inactive");
+            exit;
+        } //verifies the pwd typed vs the pwd stored in db
+        else if(password_verify($l_password, $stored_password)) {
             switch ($user_type) {
                 case "C":
                     header("location: home_page.php?user_name=" . $row['user_name']);
@@ -50,12 +57,14 @@ if(isset($_POST['login_username']) || null !== ($_SESSION["username"] && $_SESSI
                     header("location: overview.php?user_name=" . $row['user_name']);
                     break;
                 case "D":
-                    header("location: delivery_page.php?user_name=" . $row['user_name']);
+                    header("location: dashboard.php?user_name=" . $row['user_name']);
                     break;
                 default:
-                    header("location: landing_page.php?login=unidstat");
+                    unset($_SESSION['user_id']);
+                    header("location: landing_page.php?login=unidtype");
             }
         } else {
+            unset($_SESSION['user_id']);
             header("location: landing_page.php?login=wrongpass");
             exit();
         }
