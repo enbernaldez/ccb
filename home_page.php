@@ -32,18 +32,20 @@
 				    <h1 style="font-size:72px; font-weight:bold; color:white;">Check our baked <br> products.</h1>
 				    <button type="button" 
                             style="border: none;
-                                   color: white;
                                    background-color: #df8690;
                                    border-radius:50px;
                                    padding: 15px 32px;
-                                   text-align: center;
-                                   text-decoration: none;
                                    display: inline-block;
-                                   font-size: 16px;
                                    margin: 30px 0;
                                    margin-left:10%;
                                    cursor: pointer;">
-                        VIEW PRODUCTS
+                        <a href="products.php"
+                           style="text-align: center;
+                                  text-decoration: none;
+                                  font-size: 16px;
+                                  color: white;">
+                            VIEW PRODUCTS
+                        </a>
                     </button>
                 </div>
                 <div class="col-1"></div>
